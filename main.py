@@ -17,5 +17,3 @@ def sub_of_values(value_1, value_2):
     """
     subtract = value_1 - value_2
     return subtract
-
-git config --global user.name
