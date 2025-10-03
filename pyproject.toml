@@ -28,13 +28,15 @@ build-backend = "poetry.core.masonry.api"
 [tool.mypy]
 disallow_untyped_defs = true
 warn_return_any = true
+no_implicit_optional = true
 exclude = "venv"
 
 [tool.black]
 # Максимальная длина строки
-line-lenght = 121
+line-lenght = 119
 # Файлы которые не нужно форматировать
 exlude = "/.git"
 
 [tool.isort]
-line-lenght = 121
+line-lenght = 119
+multy_line_output = 3

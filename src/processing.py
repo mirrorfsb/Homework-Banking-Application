@@ -3,7 +3,8 @@ def filter_by_state(banking_operations: list, state: str = 'EXECUTED') -> list:
     возвращает новый список, содержащий только те словари,
     у которых ключ state содержит переданное в функцию значение. """
 
-    return [operation for operation in banking_operations if operation.get("state") and operation.get('state') == state]
+    return [operation for operation in banking_operations if operation.get("state")
+            and operation.get('state') == state]
 
 
 def sort_by_date(banking_operations: list, reverse: bool = True) -> list:
