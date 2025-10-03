@@ -1,7 +1,7 @@
+import pytest
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pytest
 
 
 @pytest.fixture
@@ -51,5 +51,6 @@ def testing_data_operation():
             "description": "Перевод организации",
             "from": "Visa Platinum 1246377376343588",
             "to": "Счет 14211924144426031657",
+
         },
     ]
