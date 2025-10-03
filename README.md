@@ -31,5 +31,5 @@ git clone https://github.com/mirrorfsb/Homework-Banking-Application.git
 ```
 pip install -r requirements.txt
 
-## Добавлено тестирование функций
+
 
