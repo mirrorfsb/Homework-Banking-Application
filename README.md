@@ -30,3 +30,7 @@ git clone https://github.com/mirrorfsb/Homework-Banking-Application.git
 2. Установите зависимости:
 ```
 pip install -r requirements.txt
+```
+## Тестирование.
+
+В программу добавлен функционал тестирования с помощью `Pytest`.
