@@ -54,3 +54,14 @@ def testing_data_operation():
 
         },
     ]
+
+
+@pytest.fixture
+def card_num():
+    return "1234567812345678"  # пример значения
+
+
+def test_card_number_generators(card_num):
+    """Тестирование функции на корректность длины номера карт и состоят ли они из цифр"""
+    assert len(card_num) == 16, "Номер карты некорректной длины"
+    assert card_num.isdigit(), "Номер карты содержит нецифровые символы"
