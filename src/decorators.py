@@ -1,41 +1,53 @@
 import sys
 import os
+from functools import wraps
+from typing import Any, Callable
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+"""
+from functools import wraps: Импортирует функцию wraps из модуля functools.
+wraps используется для копирования метаданных
+(например, имени функции) из одной функции в другую.
+from typing import Callable, Any: Импортирует типы Callable и Any из модуля typing.
+Callable используется для определения типа функции, а Any — для указания на любой тип данных.
 
-def log(filename=None):
-    """Декоратор, который автоматически будет логировать
-    начало и конец выполнения функции,
-    а также ее результаты или возникшие ошибки."""
-    def wrapper(function):
-        def inner(*args, **kwargs):
-            result = None  # Предварительное объявление переменной
+"""
 
+
+def log(filename: str | None = None) -> Callable:
+
+    def _log(msg: str) -> None:
+        """Объявляет вспомогательную функцию _log, которая принимает строку msg и не возвращает ничего (None).
+        Эта функция отвечает за логирование сообщений.
+        """
+        if filename is None:
+            print(msg)
+        else:
+            with open(filename, "a", encoding="utf-8") as file:
+                file.write(msg + "\n")
+
+    def decorator(func: Callable) -> Callable:
+        """
+        Декоратор @wraps(func)
+        используется для обновления метаданных обернутой функции wrapper с метаданными функции func.
+        """
+
+        @wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            """
+            Функция wrapper возвращает результат выполнения функции func.
+            """
             try:
-                # Выполняем функцию и сохраняем результат
-                result = function(*args, **kwargs)
-                output_result = f"{function.__name__} ok"
+                result = func(*args, **kwargs)
             except Exception as e:
-                # Если возникла ошибка, формируем сообщение об ошибке
-                output_result = (f"{function.__name__} "
-                                 f"error: {type(e).__name__}. "
-                                 f"Inputs: {args}, {kwargs}")
-            # Логируем результат
-            if filename is None:
-                print(output_result)
+                msg = f"{func.__name__} error: {e}. Inputs: {args}, {kwargs}"
+                _log(msg)  # Передает эту строку в функцию _log для записи в журнал или обработки.
+                raise
             else:
-                with open(filename, "a") as file:
-                    file.write(output_result)
-                    file.write("\n")
-            # Возвращаем результат функции (если не было ошибки)
-            return result
-        return inner
-    return wrapper
+                msg = f"{func.__name__} ok"
+                _log(msg)  # Передает эту строку в функцию _log для записи в журнал или обработки.
+                return result
 
+        return wrapper
 
-@log()
-def my_function(x, y):
-    return x + y
-
-
-my_function(1, 2)
+    return decorator
