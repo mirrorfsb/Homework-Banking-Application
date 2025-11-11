@@ -16,6 +16,11 @@ flake8 = "^7.3.0"
 black = "^25.1.0"
 isort = "^6.0.1"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.2"
+pytest-cov = "^7.0.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -23,6 +28,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.mypy]
 disallow_untyped_defs = true
 warn_return_any = true
+no_implicit_optional = true
 exclude = "venv"
 
 [tool.black]
@@ -32,4 +38,6 @@ line-lenght = 119
 exlude = "/.git"
 
 [tool.isort]
+profile = "black"
 line-lenght = 119
+multy_line_output = 3
