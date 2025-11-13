@@ -15,27 +15,21 @@ def input_json(file_json):
 
             # Проверяем, пустой ли файл
             if not content.strip():
-                print("Файл пустой")
                 return []
 
             # Проверяем, что содержимое - это список (начинается с [ и заканчивается ])
             if not (content.strip().startswith('[') and content.strip().endswith(']')):
-                print("Файл не содержит списков")
                 return []
 
-            data = json.loads(content)
+            data = json.load(content)
 
             # Проверяем, что результат - список
             if not isinstance(data, list):
-                print("JSON не является списком")
                 return []
 
-            print("Файл со списками")
             return data
 
     except FileNotFoundError:
-        print("Файл не найден")
         return []
     except json.JSONDecodeError:
-        print("Ошибка декодирования JSON")
         return []
