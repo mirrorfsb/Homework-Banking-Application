@@ -1,21 +1,53 @@
-import unittest
-from unittest.mock import patch, Mock
-from src.external_api import convert_currency, process_transaction
+import os
+from unittest.mock import patch
+
+from src.external_api import get_convert_sum
+
+# Имитация транзакции
+sample_transaction = {
+    "operationAmount": {
+        "amount": "25",
+        "currency": {
+            "code": "GBP"
+        }
+    }
+}
 
 
-class TestFunctions(unittest.TestCase):
+@patch('requests.get')
+def test_get_convert_sum(mock_get):
+    # Подготавливаем моковое значение для response.json()
+    mock_get.return_value.json.return_value = {
+        "date": "2018-02-22",
+        "historical": "",
+        "info": {
+            "rate": 148.972231,
+            "timestamp": 1519328414
+        },
+        "query": {
+            "amount": 25,
+            "from": "GBP",
+            "to": "RUB"
+        },
+        "result": 3724.305775
+    }
 
-    @patch("requests.get")
-    def test_convert_currency(self, mock_get):
-        mock_response = Mock()
-        mock_response.json.return_value = {"result": 1000}  # Мокируем возвращаемый JSON ответ
-        mock_get.return_value = mock_response
-        result = convert_currency(100, "USD")
-        self.assertEqual(result, 1000)
+    # Задаём API-KEY
+    os.environ["API_KEY"] = "FAKE_API_KEY"
 
-    def test_process_transaction(self):
-        file_json = {"amount": 100, "currency": "USD"}
-        with patch("src.external_api.convert_currency") as mock_convert_currency:
-            mock_convert_currency.return_value = 1000  # Мокируем возвращаемое значение convert_currency
-            result = process_transaction(file_json)
-            self.assertEqual(result, 1000)
+    # Вызываем функцию
+    result = get_convert_sum(sample_transaction)
+
+    # Проверяем результат
+    assert result == 3724.305775
+
+    # Проверяем, что вызов был осуществлён с правильными параметрами
+    mock_get.assert_called_once_with(
+        "https://api.apilayer.com/exchangerates_data/convert",
+        headers={"apikey": "FAKE_API_KEY"},
+        params={
+            "amount": "25",
+            "from": "GBP",
+            "to": "RUB"
+        }
+    )
