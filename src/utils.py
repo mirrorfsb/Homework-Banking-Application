@@ -1,6 +1,8 @@
 import json
 
+from src.decorators import logger_utils
 
+@logger_utils
 def input_json(file_json):
     """
     Это определение функции input_json,
@@ -12,24 +14,19 @@ def input_json(file_json):
     try:
         with open(file_json, "r", encoding="utf-8") as file:
             content = file.read()
-
-            # Проверяем, пустой ли файл
-            if not content.strip():
-                return []
-
-            # Проверяем, что содержимое - это список (начинается с [ и заканчивается ])
-            if not (content.strip().startswith('[') and content.strip().endswith(']')):
-                return []
-
-            data = json.load(content)
-
-            # Проверяем, что результат - список
-            if not isinstance(data, list):
-                return []
-
-            return data
-
+            if "[" not in content and "]" not in content:
+                logger_utils.error("Файл не содержит списков")
+                empty_list = []
+                return empty_list
+            else:
+                with open(file_json, encoding="utf-8") as f:
+                    data = json.load(f)
+                    logger_utils.info("Файл со списками")
+                return data
     except FileNotFoundError:
-        return []
+        logger_utils.error("Файл не найден")
+        empty_list = []
+        return empty_list
     except json.JSONDecodeError:
+        logger_utils.error("Ошибка декодирования JSON")
         return []

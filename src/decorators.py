@@ -1,3 +1,4 @@
+import logging
 import sys
 import os
 from functools import wraps
@@ -51,3 +52,43 @@ def log(filename: str | None = None) -> Callable:
         return wrapper
 
     return decorator
+
+
+def logger_masks(func):
+    """
+    Функция декорированая  которая принимает другую функцию в качестве аргумента.
+    С реализацие записи логовв определенном формате в файл
+    с последующпй перезаписью логов при вызове функции вновь
+    """
+    logging.basicConfig(
+        filename="C:\\Users\\Kirill2\\PycharmProjects\\pythonProject2\\logs\\masks.log",
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        filemode="w",  # при каждом запуске функции журнал будет перезаписан.
+    )
+    logger = logging.getLogger("masks")
+
+    def wrapper(*args, **kwargs):
+        logger.info(f"Function {func.__name__} called with args: {args}, kwargs: {kwargs}")
+        result = func(*args, **kwargs)
+        logger.info(f"Function {func.__name__} returned: {result}")
+        return result
+
+    return wrapper
+
+
+def logger_utils(func):
+    logging.basicConfig(
+        filename="C:\\Users\\Kirill2\\PycharmProjects\\pythonProject2\\logs\\utils.log",
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+    logger_utils = logging.getLogger("utils")
+
+    def wrapper(*args, **kwargs):
+        logger_utils.info(f"Function {func.__name__} called with args: {args}, kwargs: {kwargs}")
+        result = func(*args, **kwargs)
+        logger_utils.info(f"Function {func.__name__} returned: {result}")
+        return result
+
+    return wrapper
