@@ -1,32 +1,36 @@
 import json
-
 from src.decorators import logger_utils
+
 
 @logger_utils
 def input_json(file_json):
     """
-    Это определение функции input_json,
-    которая принимает аргумент: file_json (файл с данными о финансовых транзакциях)
-    и возвращает список словарей с данными о финансовых транзакциях.
-    Если файл пустой, содержит не список или не найден,
-    функция возвращает пустой список.
+    Читает JSON-файл и возвращает список словарей с данными о финансовых транзакциях.
+
+    Args:
+        file_json (str): Путь к JSON-файлу
+
+    Returns:
+        list: Список словарей с данными или пустой список в случае ошибки
     """
     try:
         with open(file_json, "r", encoding="utf-8") as file:
-            content = file.read()
-            if "[" not in content and "]" not in content:
-                logger_utils.error("Файл не содержит списков")
-                empty_list = []
-                return empty_list
-            else:
-                with open(file_json, encoding="utf-8") as f:
-                    data = json.load(f)
-                    logger_utils.info("Файл со списками")
-                return data
+            data = json.load(file)
+
+        # Проверяем, что данные являются списком
+        if not isinstance(data, list):
+            logger_utils.error("Данные в файле не являются списком")
+            return []
+
+        logger_utils.info("Файл успешно загружен")
+        return data
+
     except FileNotFoundError:
-        logger_utils.error("Файл не найден")
-        empty_list = []
-        return empty_list
-    except json.JSONDecodeError:
-        logger_utils.error("Ошибка декодирования JSON")
+        logger_utils.error(f"Файл {file_json} не найден")
+        return []
+    except json.JSONDecodeError as e:
+        logger_utils.error(f"Ошибка декодирования JSON: {e}")
+        return []
+    except Exception as e:
+        logger_utils.error(f"Неожиданная ошибка: {e}")
         return []

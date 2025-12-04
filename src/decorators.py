@@ -54,41 +54,70 @@ def log(filename: str | None = None) -> Callable:
     return decorator
 
 
-def logger_masks(func):
-    """
-    Функция декорированая  которая принимает другую функцию в качестве аргумента.
-    С реализацие записи логовв определенном формате в файл
-    с последующпй перезаписью логов при вызове функции вновь
-    """
-    logging.basicConfig(
-        filename="C:\\Users\\Kirill2\\PycharmProjects\\pythonProject2\\logs\\masks.log",
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        filemode="w",  # при каждом запуске функции журнал будет перезаписан.
-    )
-    logger = logging.getLogger("masks")
+def setup_logger(name, log_file, level=logging.INFO, filemode='a'):
+    """Универсальная функция для настройки логеров"""
 
-    def wrapper(*args, **kwargs):
+    log_dir = os.path.dirname(log_file)
+    if log_dir and not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    file_handler = logging.FileHandler(log_file, mode=filemode, encoding='utf-8')
+    file_handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    # Очищаем предыдущие обработчики (чтобы избежать дублирования)
+    if logger.handlers:
+        logger.handlers.clear()
+
+    # Добавляем обработчик
+    logger.addHandler(file_handler)
+
+    return logger
+
+
+def logger_masks(func):
+    """Декоратор для логирования функций модуля masks"""
+    logger = setup_logger(
+        "masks",
+        "logs/masks.log",  # Относительный путь
+        filemode='a'  # Добавление в конец файла вместо перезаписи
+    )
+
+    @wraps(func)
+    def wrapper(args, kwargs):
         logger.info(f"Function {func.__name__} called with args: {args}, kwargs: {kwargs}")
-        result = func(*args, **kwargs)
-        logger.info(f"Function {func.__name__} returned: {result}")
-        return result
+        try:
+            result = func(args, kwargs)
+            logger.info(f"Function {func.__name__} returned: {result}")
+            return result
+        except Exception as e:
+            logger.error(f"Function {func.__name__} raised exception: {e}")
+            raise
 
     return wrapper
 
 
 def logger_utils(func):
-    logging.basicConfig(
-        filename="C:\\Users\\Kirill2\\PycharmProjects\\pythonProject2\\logs\\utils.log",
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    """Декоратор для логирования функций модуля utils"""
+    logger = setup_logger(
+        "utils",
+        "logs/utils.log",  # Относительный путь
+        filemode='a'
     )
-    logger_utils = logging.getLogger("utils")
 
-    def wrapper(*args, **kwargs):
-        logger_utils.info(f"Function {func.__name__} called with args: {args}, kwargs: {kwargs}")
-        result = func(*args, **kwargs)
-        logger_utils.info(f"Function {func.__name__} returned: {result}")
-        return result
+    @wraps(func)
+    def wrapper(args, kwargs):
+        logger.info(f"Function {func.__name__} called with args: {args}, kwargs: {kwargs}")
+        try:
+            result = func(args, kwargs)
+            logger.info(f"Function {func.__name__} returned: {result}")
+            return result
+        except Exception as e:
+            logger.error(f"Function {func.__name__} raised exception: {e}")
+            raise
 
     return wrapper
