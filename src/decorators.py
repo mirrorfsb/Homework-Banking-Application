@@ -88,10 +88,10 @@ def logger_masks(func):
     )
 
     @wraps(func)
-    def wrapper(args, kwargs):
+    def wrapper(*args, **kwargs):
         logger.info(f"Function {func.__name__} called with args: {args}, kwargs: {kwargs}")
         try:
-            result = func(args, kwargs)
+            result = func(*args, **kwargs)
             logger.info(f"Function {func.__name__} returned: {result}")
             return result
         except Exception as e:
@@ -103,6 +103,9 @@ def logger_masks(func):
 
 def logger_utils(func):
     """Декоратор для логирования функций модуля utils"""
+
+    log_file = "../logs/utils.log"
+
     logger = setup_logger(
         "utils",
         "logs/utils.log",  # Относительный путь
@@ -110,10 +113,10 @@ def logger_utils(func):
     )
 
     @wraps(func)
-    def wrapper(args, kwargs):
+    def wrapper(*args, **kwargs):
         logger.info(f"Function {func.__name__} called with args: {args}, kwargs: {kwargs}")
         try:
-            result = func(args, kwargs)
+            result = func(*args, **kwargs)
             logger.info(f"Function {func.__name__} returned: {result}")
             return result
         except Exception as e:
