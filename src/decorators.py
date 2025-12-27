@@ -116,7 +116,7 @@ def logger_utils(func):
     def wrapper(*args, **kwargs):
         logger.info(f"Function {func.__name__} called with args: {args}, kwargs: {kwargs}")
         try:
-            result = func(*args, **kwargs)
+            result = func(args, kwargs)
             logger.info(f"Function {func.__name__} returned: {result}")
             return result
         except Exception as e:
