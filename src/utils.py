@@ -1,36 +1,38 @@
 import json
-from src.decorators import logger_utils
+import logging
+from typing import Any, Dict, List
+
+logger = logging.getLogger('utils')
+logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler('../logs/utils.log', encoding='utf-8')
+file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 
-@logger_utils
-def input_json(file_json):
+def load_transactions(file_path: str) -> List[Dict[str, Any]]:
     """
-    Читает JSON-файл и возвращает список словарей с данными о финансовых транзакциях.
-
-    Args:
-        file_json (str): Путь к JSON-файлу
-
-    Returns:
-        list: Список словарей с данными или пустой список в случае ошибки
+    Загружает список транзакций из JSON-файла.
+    Возвращает пустой список, если файл не найден, пустой,
+    содержит не список или файл повреждён.
     """
+    logger.info('Открываем список транзакций')
     try:
-        with open(file_json, "r", encoding="utf-8") as file:
+        with open(file_path, encoding="utf-8") as file:
             data = json.load(file)
-
-        # Проверяем, что данные являются списком
-        if not isinstance(data, list):
-            logger_utils.error("Данные в файле не являются списком")
-            return []
-
-        logger_utils.info("Файл успешно загружен")
-        return data
-
-    except FileNotFoundError:
-        logger_utils.error(f"Файл {file_json} не найден")
+            logger.info('Проверяем список или нет')
+            if isinstance(data, list):
+                logger.info('Загрузка списка')
+                return data
+            else:
+                logger.error('Данные не являются списком. Вернем пустой список.')
+                return []
+    except (FileNotFoundError, json.JSONDecodeError) as error:
+        logger.error(f'Произошла ошибка: {error}. Вернем пустой список.')
         return []
-    except json.JSONDecodeError as e:
-        logger_utils.error(f"Ошибка декодирования JSON: {e}")
-        return []
-    except Exception as e:
-        logger_utils.error(f"Неожиданная ошибка: {e}")
-        return []
+
+
+if __name__ == "__main__":
+
+    result = load_transactions("../data/operations.json")
+    print(result)
