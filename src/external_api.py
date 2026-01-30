@@ -13,7 +13,7 @@ def get_convert_sum(transaction: dict) -> float:
     payload = {
         "amount": transaction["operationAmount"]["amount"],
         "from": transaction["operationAmount"]["currency"]["code"],
-        "to": "RUB"
+        "to": "RUB",
     }
 
     api_key = os.getenv("API_KEY")
