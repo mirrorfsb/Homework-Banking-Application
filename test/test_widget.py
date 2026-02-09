@@ -1,8 +1,10 @@
-from src.widget import mask_account_card
-from src.widget import get_date
-import pytest
-import sys
 import os
+import sys
+
+import pytest
+
+from src.widget import get_date, mask_account_card
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 

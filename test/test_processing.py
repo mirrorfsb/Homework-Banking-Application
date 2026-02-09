@@ -1,7 +1,8 @@
-from src.processing import filter_by_state
-from src.processing import sort_by_date
-import sys
 import os
+import sys
+
+from src.processing import filter_by_state, sort_by_date
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 

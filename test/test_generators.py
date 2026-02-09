@@ -1,9 +1,10 @@
-from src.generators import filter_by_currency
-from src.generators import transaction_descriptions
-from src.generators import card_number_generator
-import pytest
-import sys
 import os
+import sys
+
+import pytest
+
+from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 

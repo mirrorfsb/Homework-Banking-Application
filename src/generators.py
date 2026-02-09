@@ -1,6 +1,7 @@
-from typing import List, Dict, Iterator
-import sys
 import os
+import sys
+from typing import Dict, Iterator, List
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
