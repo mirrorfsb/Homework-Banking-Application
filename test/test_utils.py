@@ -1,21 +1,34 @@
 import json
-from unittest.mock import patch
+from unittest.mock import mock_open, patch
 
-from src.utils import input_json
+import pytest
+
+from src.utils import load_transactions
 
 
-def test_input_json():
-    with patch("builtins.open") as mock_open:
-        mock_file = mock_open.return_value.__enter__.return_value
-        mock_file.read.return_value = json.dumps(
-            {
-                "id": 185048835,
-                "state": "EXECUTED",
-                "date": "2019-05-06T00:17:42.736209",
-                "operationAmount": {"amount": "74895.83", "currency": {"name": "руб.", "code": "RUB"}},
-                "description": "Перевод со счета на счет",
-                "from": "Счет 27921306202254867520",
-                "to": "Счет 49884962711830774470",
-            }
-        )
-        assert input_json("../data/operations.json") == []
+def test_load_transactions_valid():
+    fake_data = [{"amount": 100, "currency": "RUB"}, {"amount": 200, "currency": "USD"}]
+    m = mock_open(read_data=json.dumps(fake_data))
+    with patch("builtins.open", m):
+        res = load_transactions("anyfile.json")
+        assert res == fake_data
+
+
+def test_load_transactions_not_found():
+    with patch("builtins.open", side_effect=FileNotFoundError()):
+        res = load_transactions("missing.json")
+        assert res == []
+
+
+def test_load_transactions_jsonerror():
+    m = mock_open(read_data="{not json}")
+    with patch("builtins.open", m):
+        res = load_transactions("broken.json")
+        assert res == []
+
+
+def test_load_transactions_not_list():
+    m = mock_open(read_data=json.dumps({"not": "a list"}))
+    with patch("builtins.open", m):
+        res = load_transactions("dict.json")
+        assert res == []
