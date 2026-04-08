@@ -6,17 +6,28 @@ from src.masks import get_mask_account, get_mask_card_number
 def mask_account_card(card_info: str) -> str:
     """Функция принимает один аргумент — строку, содержащую тип и номер карты или счета и
     возвращает строку с замаскированным номером."""
-    card_type, card_number = card_info.rsplit(" ", 1)
 
-    if card_type in ["Visa Platinum", "Maestro"]:
-        if len(card_number) == 16:
-            return f"{card_type} {get_mask_card_number(card_number)}"
-        return "Некорректный ввод"
+    if card_info is None:
+        return ""
 
-    elif card_type == "Счет":
-        return f"{card_type} {get_mask_account(card_number)}"
-    else:
-        return "Некорректный ввод"
+    if not isinstance(card_info, str):
+        card_info = str(card_info)
+
+    try:
+        card_type, card_number = card_info.rsplit(" ", 1)
+
+        if card_type != "Счет":
+            if len(card_number) == 16:
+                return f"{card_type} {get_mask_card_number(card_number)}"
+            return "Некорректный ввод"
+
+        elif card_type == "Счет":
+            return f"{card_type} {get_mask_account(card_number)}"
+        else:
+            return "Некорректный ввод"
+
+    except (ValueError, AttributeError):
+        return card_info
 
 
 def get_date(date_str: str) -> str:

@@ -47,7 +47,7 @@ def get_mask_account(account_number: str | int) -> str:
             return "Введен некорректный номер"
 
         # Возвращаем маску
-        return f"{account_str[-4:]}"
+        return f"**{account_str[-4:]}"
 
     except (TypeError, ValueError, AttributeError):
         logger.error("Некорректный тип данных для номера счета")

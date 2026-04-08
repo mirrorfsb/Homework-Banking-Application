@@ -104,6 +104,5 @@ if __name__ == '__main__':
                             Сумма: {amount_i}  {currency_i}
                   """)
 
-
     if __name__ == "__main__":
         main()
